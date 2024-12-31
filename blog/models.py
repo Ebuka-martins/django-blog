@@ -3,32 +3,30 @@ from django.contrib.auth.models import User
 
 STATUS = ((0, "Draft"), (1, "Published"))
 
-# Create your models here.
 class Post(models.Model):
     title = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(max_length=200, unique=True)
     author = models.ForeignKey(
-    User, on_delete=models.CASCADE, related_name="blog_posts"
-)
+        User, on_delete=models.CASCADE, related_name="blog_posts"
+    )
+    content = models.TextField(null=True, blank=True)  # Added null=True and blank=True
+    created_on = models.DateTimeField(auto_now_add=True)
+    status = models.IntegerField(choices=STATUS, default=0)
+    excerpt = models.TextField(blank=True, null=True)  # Added null=True
+    updated_on = models.DateTimeField(auto_now=True)
 
-content = models.TextField()
-created_on = models.DateTimeField(auto_now_add=True)
-status = models.IntegerField(choices=STATUS, default=0)
-excerpt = models.TextField(blank=True)
-updated_on = models.DateTimeField(auto_now=True)
-class Meta:
+    class Meta:
         ordering = ["-created_on"]
 
-def __str__(self):
-        return f"{self.title} | written by {self.author}"       
+    def __str__(self):
+        return f"{self.title} | written by {self.author}"     
 
-# create comment models
 class Comment(models.Model):
     post = models.ForeignKey(
         Post, on_delete=models.CASCADE, related_name="comments")
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="commenter")
-    content = models.TextField()  # Changed from body to content
+    content = models.TextField(null=True, blank=True)  # Added null=True and blank=True
     approved = models.BooleanField(default=False)
     created_on = models.DateTimeField(auto_now_add=True)
     
@@ -36,12 +34,8 @@ class Comment(models.Model):
         ordering = ["created_on"]
 
     def __str__(self):
-        return f"Comment {self.content} by {self.author}"  # Changed here too 
+        return f"Comment {self.content} by {self.author}"
 
-  
-
-
-# Event model
 class Event(models.Model):
     event_name = models.CharField(max_length=200, unique=True)
     location = models.CharField(max_length=200)
@@ -50,7 +44,6 @@ class Event(models.Model):
     def __str__(self):
         return self.event_name
 
-# Updated Ticket model
 class Ticket(models.Model):
     ticket_holder = models.ForeignKey(
         User,
@@ -65,4 +58,4 @@ class Ticket(models.Model):
     )
 
     def __str__(self):
-        return f"Ticket for {self.ticket_holder}"        
+        return f"Ticket for {self.ticket_holder}"
