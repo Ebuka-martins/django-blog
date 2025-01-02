@@ -11,12 +11,7 @@ from django.shortcuts import render
 from django.views import generic
 from .models import Post
 
-class PostList(generic.ListView):
-    model = Post
-    template_name = "blog/post_list.html"
-    
-    def get_queryset(self):
-        queryset = Post.objects.order_by('-created_on')
-        print("Number of posts:", queryset.count())  # Debug print
-        print("Available posts:", list(queryset.values('title', 'author')))  # More detailed debug info
-        return queryset
+class PostList(generic.ListView): 
+    queryset = Post.objects.order_by('-created_on')
+    template_name = "blog/index.html"
+    paginate_by = 6
